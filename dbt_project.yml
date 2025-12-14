@@ -1,0 +1,46 @@
+name: 'dbt_ecommerce'
+version: '1.0.0'
+config-version: 2
+
+profile: 'dbt_ecommerce'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+target-path: "target"
+
+# Custom macro dispatch
+dispatch:
+  - macro_namespace: dbt
+    search_order: ['dbt_ecommerce', 'dbt']
+
+# Models configuration
+models:
+  dbt_ecommerce:
+    # Staging layer - views
+    staging:
+      +materialized: view
+      +schema: staging_schema
+    
+    # Cleaned layer - tables
+    cleaned:
+      +materialized: table
+      +schema: cleaned_schema
+    
+    # Analytics layer - dimension/fact tables
+    analytics:
+      +materialized: table
+      +schema: analytics_schema
+      
+    reporting:
+      +materialized: table
+      +schema: report_schema
+
