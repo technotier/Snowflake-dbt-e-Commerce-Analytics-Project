@@ -1,3 +1,4 @@
+-- yearly value projection based on present spending of customers
 SELECT 
 value_tier,
 activity_status,
@@ -10,8 +11,7 @@ WHERE days_as_customer > 30
 GROUP BY value_tier, activity_status
 ORDER BY projected_annual_value DESC;
 
--- ইনসাইট: গ্রাহকের বর্তমান স্পেন্ডিং প্যাটার্ন থেকে বার্ষিক ভ্যালু প্রোজেকশন তৈরি করুন।
-
+-- check up-sale or cross sale based on aov
 SELECT 
     CASE 
         WHEN aov > 1000 THEN 'High AOV (>1000)'
@@ -28,8 +28,7 @@ WHERE total_orders > 0
 GROUP BY 1
 ORDER BY avg_lifetime_value DESC;
 
--- ইনসাইট: AOV সেগমেন্ট ভিত্তিক আপ-সেল/ক্রস-সেল অপারচুনিটিস চিহ্নিত করুন।
-
+-- rfm segment analysis for annual budget planing
 SELECT
 rfm_segment,
 COUNT(*) as segment_size,
@@ -41,8 +40,7 @@ FROM analytics_schema.customers_analytics_view
 GROUP BY rfm_segment
 ORDER BY segment_total_value DESC;
 
--- ইনসাইট: প্রতিটি RFM সেগমেন্টের আকার এবং তাদের মোট আর্থিক অবদান দেখে মার্কেটিং বাজেট বন্টন করুন।
-
+-- discount impact based on value tier and their aov
 SELECT
 value_tier,
 COUNT(*) as customer_count,
@@ -54,8 +52,7 @@ WHERE total_orders > 0
 GROUP BY value_tier
 ORDER BY avg_discount_usage DESC;
 
--- ইনসাইট: কোন ভ্যালু টায়ারের গ্রাহকরা ডিসকাউন্টে বেশি সাড়া দেয় এবং তাদের AOV কত।
-
+-- high retention customers profiles
 SELECT
 customer_name,
 days_as_customer,
@@ -68,8 +65,7 @@ WHERE retention_level = 'High Retention'
 AND purchase_pattern = 'Frequent Buyer'
 ORDER BY days_as_customer DESC;
 
--- ইনসাইট: দীর্ঘদিনের হাই-রিটেনশন গ্রাহকদের প্রোফাইল বিশ্লেষণ করে অনুরূপ গ্রাহক আকর্ষণের স্ট্র্যাটেজি তৈরি করুন।
-
+-- Male vs Female customers analysis
 SELECT
 gender,
 COUNT(*) as customer_count,
@@ -81,8 +77,7 @@ FROM analytics_schema.customers_analytics_view
 GROUP BY gender
 ORDER BY avg_lifetime_value DESC;
 
--- ইনসাইট: লিঙ্গভিত্তিক ক্রয় আচরণ বিশ্লেষণ করে টার্গেটেড মার্কেটিং ক্যাম্পেইন ডিজাইন করুন।
-
+-- VIP or Premium customers who inactive over 180+ days
 SELECT
 customer_name,
 last_order,
@@ -95,8 +90,7 @@ WHERE activity_status = 'Dormant'
 AND value_tier IN ('VIP', 'Premium')
 ORDER BY total_spent DESC;
 
--- ইনসাইট: ১৮০+ দিন ক্রয় না করা ভিআইপি/প্রিমিয়াম গ্রাহকদের বিশেষ ডিসকাউন্ট বা সার্ভে পাঠিয়ে রিএক্টিভেট করুন।
-
+-- top customers for special promotion offer or discounts
 SELECT
 customer_name,
 total_spent,
@@ -110,8 +104,7 @@ WHERE customer_status = '✅ Active Buyer'
 ORDER BY total_spent DESC
 LIMIT 10;
 
--- ইনসাইট: আপনার ২০টি শীর্ষ গ্রাহক যারা সবচেয়ে বেশি খরচ করে এবং নিয়মিত ক্রয় করে। এদের বিশেষ সুযোগ-সুবিধা দিন।
-
+-- customers list for win back campaigns
 SELECT
 customer_name,
 recency_days,
@@ -124,5 +117,3 @@ FROM analytics_schema.customers_analytics_view
 WHERE rfm_segment = 'At Risk' 
 AND total_spent > 500
 ORDER BY total_spent DESC;
-
--- ইনসাইট: ৫০০+ টাকা খরচ করেছে কিন্তু এখন ক্রয় কমিয়েছে এমন গ্রাহকদের উইন-ব্যাক ক্যাম্পেইনের জন্য প্রায়োরিটাইজ করুন।
