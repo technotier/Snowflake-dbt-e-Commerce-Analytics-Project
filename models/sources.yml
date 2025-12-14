@@ -1,0 +1,66 @@
+version: 2
+
+sources:
+  - name: raw_schema
+    description: "Raw data from source system"
+    database: "{{ target.database }}"
+    schema: raw_schema
+    tables:
+      - name: customers
+        description: "Raw customers table"
+        columns:
+          - name: id
+            tests:
+              - unique
+              - not_null
+          - name: email
+            tests:
+              - not_null
+              
+      - name: category
+        description: "Raw product categories"
+        columns:
+          - name: id
+            tests:
+              - unique
+              - not_null
+              
+      - name: products
+        description: "Raw products table"
+        columns:
+          - name: id
+            tests:
+              - unique
+              - not_null
+          - name: category_id
+            tests:
+              - relationships:
+                  to: source('raw_schema', 'category')
+                  field: id
+                  
+      - name: orders
+        description: "Raw orders table"
+        columns:
+          - name: id
+            tests:
+              - unique
+              - not_null
+          - name: customer_id
+            tests:
+              - relationships:
+                  to: source('raw_schema', 'customers')
+                  field: id
+                  
+      - name: order_items
+        description: "Raw order items table"
+        columns:
+          - name: order_id
+            tests:
+              - relationships:
+                  to: source('raw_schema', 'orders')
+                  field: id
+          - name: product_id
+            tests:
+              - relationships:
+                  to: source('raw_schema', 'product')
+                  field: id
