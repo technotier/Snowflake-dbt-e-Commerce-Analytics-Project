@@ -1,3 +1,4 @@
+-- high order rate products
 SELECT
 product_name,
 active_days,
@@ -10,8 +11,7 @@ AND active_days < 30
 ORDER BY total_revenue DESC
 LIMIT 10;
 
--- ইনসাইট: কম দিনে হাই অর্ডার রেটওয়ালা প্রোডাক্টগুলো সম্ভাব্য "ভাইরাল" বা হট ট্রেন্ডিং আইটেম।
-
+-- high engagement products
 SELECT
 customer_engagement,
 COUNT(*) as product_count,
@@ -27,8 +27,7 @@ CASE customer_engagement
 ELSE 4
 END;
 
--- ইনসাইট: হাই এনগেজমেন্ট প্রোডাক্টগুলো ক্রস-সেলিং এবং কাস্টমার রিটেনশন ক্যাম্পেইনের জন্য আদর্শ।
-
+-- discount impact on category
 SELECT
 category_name, 
 COUNT(*) as total_products,
@@ -40,8 +39,7 @@ WHERE discounted_sales > 0
 GROUP BY category_name
 ORDER BY total_discounted_sales DESC;
 
--- ইনসাইট: কোন ক্যাটাগরিতে ডিসকাউন্ট বেশি কার্যকরী হচ্ছে এবং তা মার্জিনে কতটা প্রভাব ফেলছে।
-
+-- stock status for high demand product
 SELECT
 product_name,
 category_name,
@@ -54,8 +52,7 @@ WHERE inventory_status = '🛑 Urgent Restock'
 AND revenue_category IN ('A - Top 20%', 'B - Middle 30%')
 ORDER BY daily_order_rate DESC;
 
--- ইনসাইট: যেসব হাই-ডিমান্ড প্রোডাক্ট আউট অফ স্টক, সেগুলোতে তাত্ক্ষণিক রিস্টক প্রায়োরিটি দিন।
-
+-- inventory management strategy
 SELECT
 revenue_category,
 volume_category,
@@ -73,8 +70,7 @@ CASE revenue_category
 	ELSE 4
 END;
 
--- ইনসাইট: ABC অ্যানালাইসিস করে ইনভেন্টরি ম্যানেজমেন্ট স্ট্র্যাটেজি ডেভেলপ করুন:
-
+-- price segment wise products sales status
 SELECT
 price_segment,
 COUNT(*) as product_count,
@@ -85,8 +81,7 @@ FROM analytics_schema.product_performance_view
 GROUP BY price_segment
 ORDER BY avg_revenue DESC;
 
--- ইনসাইট: কোন প্রাইস সেগমেন্ট (Premium, Mid-range, Economy) সবচেয়ে লাভজনক এবং ভলিউম জেনারেট করছে।
-
+-- product with high order volume and margin
 SELECT
 product_name,
 category_name,
@@ -98,8 +93,7 @@ FROM analytics_schema.product_performance_view
 WHERE product_status = '💰 Profit Champion'
 ORDER BY total_profit DESC;
 
--- ইনসাইট: যে প্রোডাক্টগুলো ভালো ভলিউমের সাথে উচ্চ মার্জিন দিচ্ছে, তাদের প্রোডাকশন/স্টকিং বৃদ্ধি করুন।
-
+-- Year-round vs Seasonal products for inventory stock planning
 SELECT
 product_seasonality,
 COUNT(*) as product_count,
@@ -109,8 +103,7 @@ FROM analytics_schema.product_performance_view
 GROUP BY product_seasonality
 ORDER BY total_segment_revenue DESC;
 
--- ইনসাইট: Year-round vs Seasonal প্রোডাক্টসের পারফরমেন্স তুলনা করে ইনভেন্টরি প্ল্যানিং অপটিমাইজ করুন।
-
+-- low sale but high profit products for marketing or campaigns
 SELECT product_name, category_name, stock_turn_over, 
        profit_percent, total_unit_sold, customer_engagement
 FROM analytics_schema.product_performance_view 
@@ -118,8 +111,7 @@ WHERE stock_turn_over < 20
 AND margin_category IN ('Very High', 'High Margin')
 ORDER BY profit_percent DESC;
 
--- ইনসাইট: কম বিক্রি কিন্তু উচ্চ মার্জিনের প্রোডাক্টগুলোকে টার্গেটেড মার্কেটিং বা বান্ডেল অফারের মাধ্যমে প্রমোট করুন।
-
+-- top 20% revenue generated products
 SELECT
 product_name,
 category_name,
@@ -132,8 +124,7 @@ FROM analytics_schema.product_performance_view
 WHERE product_status = '🏆 Star Product'
 ORDER BY total_revenue DESC;
 
--- ইনসাইট: টপ ২০% রেভেনিউ জেনারেটর যারা হাই মার্জিনও বজায় রাখছে। এগুলোকে মার্কেটিং ফোকাসে রাখুন।
-
+-- stock turn over
 with 
 product_sales_cte as (
 select 
