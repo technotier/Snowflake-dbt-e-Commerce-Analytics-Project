@@ -29,7 +29,7 @@ ready tables for reporting and business insights.
 - order_items
 
 ### Staging
-- Transfer all tables with data exactly in raw tables
+- Transfer all tables with data from raw_schema to staging as it is in raw tables
 
 ### Cleaned
 - Standardized column names
