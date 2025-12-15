@@ -1,4 +1,29 @@
--- high order rate products
+-- profit champion - high volume and high margin products
+SELECT
+product_name,
+category_name,
+total_unit_sold,
+total_profit,
+profit_percent,
+volume_category
+FROM analytics_schema.product_performance_view 
+WHERE product_status = '💰 Profit Champion'
+ORDER BY total_profit DESC;
+
+-- star products identification
+SELECT
+product_name,
+category_name,
+total_revenue,
+total_profit,
+margin_category,
+product_status,
+daily_order_rate
+FROM analytics_schema.product_performance_view 
+WHERE product_status = '🏆 Star Product'
+ORDER BY total_revenue DESC;
+
+-- active days vs performance co-relation
 SELECT
 product_name,
 active_days,
@@ -11,7 +36,7 @@ AND active_days < 30
 ORDER BY total_revenue DESC
 LIMIT 10;
 
--- high engagement products
+-- customer engagement level with products
 SELECT
 customer_engagement,
 COUNT(*) as product_count,
@@ -27,7 +52,7 @@ CASE customer_engagement
 ELSE 4
 END;
 
--- discount impact on category
+-- discount effectiveness analysis
 SELECT
 category_name, 
 COUNT(*) as total_products,
@@ -39,7 +64,7 @@ WHERE discounted_sales > 0
 GROUP BY category_name
 ORDER BY total_discounted_sales DESC;
 
--- stock status for high demand product
+-- high demand but low stock products
 SELECT
 product_name,
 category_name,
@@ -52,7 +77,7 @@ WHERE inventory_status = '🛑 Urgent Restock'
 AND revenue_category IN ('A - Top 20%', 'B - Middle 30%')
 ORDER BY daily_order_rate DESC;
 
--- inventory management strategy
+-- inventory based on product classification
 SELECT
 revenue_category,
 volume_category,
@@ -70,7 +95,7 @@ CASE revenue_category
 	ELSE 4
 END;
 
--- price segment wise products sales status
+-- price segment performance
 SELECT
 price_segment,
 COUNT(*) as product_count,
@@ -81,19 +106,7 @@ FROM analytics_schema.product_performance_view
 GROUP BY price_segment
 ORDER BY avg_revenue DESC;
 
--- product with high order volume and margin
-SELECT
-product_name,
-category_name,
-total_unit_sold,
-total_profit,
-profit_percent,
-volume_category
-FROM analytics_schema.product_performance_view 
-WHERE product_status = '💰 Profit Champion'
-ORDER BY total_profit DESC;
-
--- Year-round vs Seasonal products for inventory stock planning
+-- seasonality pattern analysis
 SELECT
 product_seasonality,
 COUNT(*) as product_count,
@@ -103,28 +116,20 @@ FROM analytics_schema.product_performance_view
 GROUP BY product_seasonality
 ORDER BY total_segment_revenue DESC;
 
--- low sale but high profit products for marketing or campaigns
-SELECT product_name, category_name, stock_turn_over, 
-       profit_percent, total_unit_sold, customer_engagement
+-- slow moving but high margin products
+SELECT
+product_name,
+category_name,
+stock_turn_over, 
+profit_percent,
+total_unit_sold,
+customer_engagement
 FROM analytics_schema.product_performance_view 
 WHERE stock_turn_over < 20 
 AND margin_category IN ('Very High', 'High Margin')
 ORDER BY profit_percent DESC;
 
--- top 20% revenue generated products
-SELECT
-product_name,
-category_name,
-total_revenue,
-total_profit,
-margin_category,
-product_status,
-daily_order_rate
-FROM analytics_schema.product_performance_view 
-WHERE product_status = '🏆 Star Product'
-ORDER BY total_revenue DESC;
-
--- stock turn over
+-- stock inventory analysis
 with 
 product_sales_cte as (
 select 
@@ -164,3 +169,4 @@ case
 end as stock_health
 from 
 stock_turn_over_cte
+
