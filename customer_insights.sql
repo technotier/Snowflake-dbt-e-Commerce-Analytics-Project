@@ -1,4 +1,4 @@
--- yearly value projection based on present spending of customers
+-- customer life time value projection
 SELECT 
 value_tier,
 activity_status,
@@ -11,7 +11,7 @@ WHERE days_as_customer > 30
 GROUP BY value_tier, activity_status
 ORDER BY projected_annual_value DESC;
 
--- check up-sale or cross sale based on aov
+-- customer segment based on AOV
 SELECT 
     CASE 
         WHEN aov > 1000 THEN 'High AOV (>1000)'
@@ -28,7 +28,7 @@ WHERE total_orders > 0
 GROUP BY 1
 ORDER BY avg_lifetime_value DESC;
 
--- rfm segment analysis for annual budget planing
+-- customer analysis based on RFM segment
 SELECT
 rfm_segment,
 COUNT(*) as segment_size,
@@ -40,7 +40,7 @@ FROM analytics_schema.customers_analytics_view
 GROUP BY rfm_segment
 ORDER BY segment_total_value DESC;
 
--- discount impact based on value tier and their aov
+-- discount sensitivity analysis
 SELECT
 value_tier,
 COUNT(*) as customer_count,
@@ -52,7 +52,7 @@ WHERE total_orders > 0
 GROUP BY value_tier
 ORDER BY avg_discount_usage DESC;
 
--- high retention customers profiles
+-- high retention customer profile
 SELECT
 customer_name,
 days_as_customer,
@@ -65,7 +65,7 @@ WHERE retention_level = 'High Retention'
 AND purchase_pattern = 'Frequent Buyer'
 ORDER BY days_as_customer DESC;
 
--- Male vs Female customers analysis
+-- purchase behavior - male vs female
 SELECT
 gender,
 COUNT(*) as customer_count,
@@ -77,7 +77,7 @@ FROM analytics_schema.customers_analytics_view
 GROUP BY gender
 ORDER BY avg_lifetime_value DESC;
 
--- VIP or Premium customers who inactive over 180+ days
+-- reactivate customers those are inactive 180+ days
 SELECT
 customer_name,
 last_order,
@@ -90,7 +90,7 @@ WHERE activity_status = 'Dormant'
 AND value_tier IN ('VIP', 'Premium')
 ORDER BY total_spent DESC;
 
--- top customers for special promotion offer or discounts
+-- top 10 most active customers
 SELECT
 customer_name,
 total_spent,
@@ -104,7 +104,7 @@ WHERE customer_status = '✅ Active Buyer'
 ORDER BY total_spent DESC
 LIMIT 10;
 
--- customers list for win back campaigns
+-- win back campaign for risk customers
 SELECT
 customer_name,
 recency_days,
@@ -117,3 +117,4 @@ FROM analytics_schema.customers_analytics_view
 WHERE rfm_segment = 'At Risk' 
 AND total_spent > 500
 ORDER BY total_spent DESC;
+
